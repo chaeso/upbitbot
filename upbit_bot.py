@@ -4,12 +4,14 @@ from upbitlib.upbit import Upbit
 from pytz import timezone
 
 # 업비트 기반 변동성 돌파 전략 https://m.post.naver.com/viewer/postView.nhn?volumeNo=15975365&memberNo=40921089
+UPBIT_API_KEY = ''
+UPBIT_SEC_KEY = ''
 
-upbit = Upbit('API KEY', 'SECRET KEY')
-GROWING_PERIOD = 5  # 3 days
-BETTING_BUDGET = 500000   # 코인별 최대 5만원
+upbit = Upbit(UPBIT_API_KEY, UPBIT_SEC_KEY)
+GROWING_PERIOD = 5  # 5 days
+BETTING_BUDGET = 10000   # 코인별 최대 1만원
 
-SPREAD_GAP = 0.001
+SPREAD_GAP = 0.002
 
 
 def candidate_coins():
@@ -128,10 +130,6 @@ if __name__ == '__main__':
 
     trade_markets = list(filter(lambda m: coin_betting_ratio[m] > 0, trade_markets))
 
-    # print(trade_markets)
-    # print(coin_betting_ratio)
-    # print(coin_noise)
-
     while True:
         for market in trade_markets:
             if market in already_buy:
@@ -149,7 +147,7 @@ if __name__ == '__main__':
             over_ratio = today_current / (today_opening + k)
 
             if over_ratio > 1.0:
-                print(market, "buy now!!! = ", over_ratio, " budget = ", BETTING_BUDGET * coin_betting_ratio[market])
+                print(market, "buy now => ", over_ratio, " budget = ", BETTING_BUDGET * coin_betting_ratio[market])
                 buy(market, BETTING_BUDGET * coin_betting_ratio[market])
                 already_buy[market] = True
                 # 만약 현재 시가 기준으로 전날 등락폭 대비해서 올랐으면 사자
