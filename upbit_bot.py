@@ -6,15 +6,21 @@ from pytz import timezone
 # 업비트 기반 변동성 돌파 전략 https://m.post.naver.com/viewer/postView.nhn?volumeNo=15975365&memberNo=40921089
 UPBIT_API_KEY = ''
 UPBIT_SEC_KEY = ''
-
-upbit = Upbit(UPBIT_API_KEY, UPBIT_SEC_KEY)
+SELECTED_COINS = ['BTC', 'ETH', 'XRP', 'ETC', 'OMG', 'ZEC', 'XMR', 'XLM', 'ADA',
+                  'EOS', 'ONT', 'MFT', 'BAT', 'LOOM', 'BCH', 'ZIL', 'IOST']
 GROWING_PERIOD = 5  # 5 days
-BETTING_BUDGET = 10000   # 코인별 최대 1만원
-
+BETTING_BUDGET = 10000  # 코인별 최대 1만원
+MAX_NUM_COIN = 4  # 하루 최대 코인 4개 투자
 SPREAD_GAP = 0.002
 
 
+# API 초기화
+upbit = Upbit(UPBIT_API_KEY, UPBIT_SEC_KEY)
+
+
 def candidate_coins():
+    if SELECTED_COINS:
+        return map(lambda x: 'KRW-{0}'.format(x), SELECTED_COINS)
     candidate_coin = map(lambda x: x['market'], upbit.get_markets())
     return filter(lambda x: x.startswith('KRW'), candidate_coin)
 
@@ -123,6 +129,7 @@ if __name__ == '__main__':
     already_buy = {}
     coin_noise = {}
     coin_betting_ratio = {}
+    coin_investable = MAX_NUM_COIN
 
     for market in trade_markets:
         coin_noise[market] = get_market_noise(market)
@@ -134,6 +141,9 @@ if __name__ == '__main__':
         for market in trade_markets:
             if market in already_buy:
                 continue
+
+            if coin_investable <= 0:
+                break
 
             candles = upbit.get_candles_daily(market, '', 2)  # Today, Yesterday
 
@@ -147,9 +157,9 @@ if __name__ == '__main__':
             over_ratio = today_current / (today_opening + k)
 
             if over_ratio > 1.0:
-                print(market, "buy now => ", over_ratio, " budget = ", BETTING_BUDGET * coin_betting_ratio[market])
                 buy(market, BETTING_BUDGET * coin_betting_ratio[market])
                 already_buy[market] = True
+                coin_investable -= 1
                 # 만약 현재 시가 기준으로 전날 등락폭 대비해서 올랐으면 사자
 
         time.sleep(1)
