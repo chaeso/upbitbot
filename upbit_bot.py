@@ -155,6 +155,6 @@ if __name__ == '__main__':
         time.sleep(1)
 
         t = datetime.now(timezone('Asia/Seoul'))
-        if t.hour == 23 and t.minute > 45:  # AM 8:00 ~ 9:00 사이에는 무조건 판다
+        if t.hour == 23 and t.minute > 45:  # 저녁 12시 전에 판매 한다.
             dump_all()
             exit(0)
