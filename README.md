@@ -3,6 +3,9 @@
 헤이비트(heybit)라는 투자봇의 로직을 파이썬으로 비슷하게 구현해 보았습니다.
 관련 설명 : https://m.post.naver.com/viewer/postView.nhn?volumeNo=15975365&memberNo=40921089
 
+주의 : 업비트 API 변경으로 코드가 더이상 동작 하지 않습니다. 
+
+
 # 환경
 
 python3.7
